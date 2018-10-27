@@ -60,25 +60,7 @@ public class TruckTrailer {
 		Cabin = value;
 	}
 
-	/**
-	 * Конструктор
-	 * 
-	 * @param maxSpeed
-	 *            Максимальная скорость
-	 * @param weight
-	 *            Вес автомобиля
-	 * @param mainColor
-	 *            Основной цвет кузова
-	 * @param dopColor
-	 *            Дополнительный цвет
-	 * @param frontSpoiler
-	 *            Признак наличия переднего спойлера
-	 * @param sideSpoiler
-	 *            Признак наличия боковых спойлеров
-	 * @param backSpoiler
-	 *            Признак наличия заднего спойлера
-	 */
-	public TruckTrailer(int maxSpeed, float weight, Color mainColor,
+	public TruckTrailer(int maxSpeed, float weight, Color mainColor,// Конструктор
 			Color dopColor, boolean cabin) throws Exception {
 		MaxSpeed = maxSpeed;
 		setWeight(weight);
@@ -142,7 +124,7 @@ public class TruckTrailer {
 	}
 
 	public void DrawTruckTrailer(Graphics g) throws Exception// Отрисовка
-																// автомобиля
+	// автомобиля
 	{
 		g.setColor(getDopColor()); // прицеп
 		g.fillRect((int) _startPosX + 35, (int) _startPosY - 4, 72, 50);
