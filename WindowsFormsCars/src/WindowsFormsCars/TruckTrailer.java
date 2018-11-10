@@ -37,10 +37,10 @@ public class TruckTrailer extends Truck {
 	public void DrawTruckTrailer(Graphics g)// ќтрисовка автомобил€
 	{
 		super.DrawTruckTrailer(g);
-		g.setColor(getMainColor()); // прицеп
+		g.setColor(getDopColor()); // прицеп
 		g.fillRect((int) _startPosX + 35, (int) _startPosY - 4, 72, 50);
 
-		g.setColor(getDopColor());// кабина
+		g.setColor(getMainColor());// кабина
 		g.fillRect((int) _startPosX - 3, (int) _startPosY + 10, 35, 38);
 		g.fillRect((int) _startPosX + 30, (int) _startPosY + 43, 30, 5);
 
