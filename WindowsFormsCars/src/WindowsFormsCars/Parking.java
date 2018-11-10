@@ -1,13 +1,14 @@
 package WindowsFormsCars;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.awt.Color;
 import java.awt.Graphics;
 
 public class Parking<T extends ITransport> {
-	ArrayList<T> _places;// / Массив объектов, которые храним
-
-	private int PictureWidth;// / Ширина окна отрисовки
+	private HashMap<Integer, T> _places;//Массив объектов, которые храним
+	private int _maxCount;
+	private int PictureWidth;//Ширина окна отрисовки
 
 	public int getPictureWidth() {
 		return PictureWidth;
@@ -30,20 +31,20 @@ public class Parking<T extends ITransport> {
 	private int _placeSizeWidth = 210;// / Размер парковочного места (ширина)
 	private int _placeSizeHeight = 80;// / Размер парковочного места (высота)
 
-	public Parking(int size, int pictureWidth, int pictureHeight) {// /
-																	// Конструктор
-		_places = new ArrayList<T>(size);
+	public Parking(int size, int pictureWidth, int pictureHeight) { // Конструктор
+		_maxCount = size;
+		_places = new HashMap<Integer, T>();
 		this.PictureWidth = PictureWidth;
 		this.PictureHeight = PictureHeight;
-		for (int i = 0; i < size; i++) {
-			_places.add(null);
-		}
 	}
 
 	public int addTransport(T transport) {
-		for (int i = 0; i < _places.size(); i++) {
+		if (_places.size() == _maxCount) {
+			return -1;
+		}
+		for (int i = 0; i < _maxCount; i++) {
 			if (checkFreePlace(i)) {
-				_places.add(i, transport);
+				_places.put(i, transport);
 				_places.get(i).SetPosition(5 + i / 5 * _placeSizeWidth + 5,
 						i % 5 * _placeSizeHeight + 15, PictureWidth,
 						PictureHeight);
@@ -54,13 +55,10 @@ public class Parking<T extends ITransport> {
 	}
 
 	public T removeTransport(int index) {
-		if (index < 0 || index > _places.size()) {
-			return null;
-		}
 		if (!checkFreePlace(index)) {
-			T car = _places.get(index);
-			_places.set(index, null);
-			return car;
+			T transport = _places.get(index);
+			_places.remove(index);
+			return transport;
 		}
 		return null;
 	}
@@ -68,15 +66,13 @@ public class Parking<T extends ITransport> {
 	private boolean checkFreePlace(int index) {// / Метод проверки заполнености
 												// парковочного места (ячейки
 												// массива)
-		return _places.get(index) == null;
+		return !_places.containsKey(index);
 	}
 
 	public void Draw(Graphics g) {// / Метод отрисовки парковки
 		DrawMarking(g);
-		for (int i = 0; i < _places.size(); i++) {
-			if (!checkFreePlace(i)) {
-				_places.get(i).DrawTruckTrailer(g);
-			}
+		for (T transport : _places.values()) {
+			transport.DrawTruckTrailer(g);
 		}
 	}
 
@@ -84,10 +80,10 @@ public class Parking<T extends ITransport> {
 										// парковочных мест
 	{
 		g.setColor(Color.BLACK);
-		g.drawRect(0, 0, (_places.size() / 5) * _placeSizeWidth, 480);// границы
-																		// праковки
-		for (int i = 0; i < _places.size() / 5; i++) {// отрисовываем, по 5 мест
-														// на линии
+		g.drawRect(0, 0, (_maxCount / 5) * _placeSizeWidth, 480);// границы
+																	// праковки
+		for (int i = 0; i < _maxCount / 5; i++) {// отрисовываем, по 5 мест
+													// на линии
 			for (int j = 0; j < 6; ++j) {
 				g.drawLine(i * _placeSizeWidth, j * _placeSizeHeight, i
 						* _placeSizeWidth + 110, j * _placeSizeHeight);
