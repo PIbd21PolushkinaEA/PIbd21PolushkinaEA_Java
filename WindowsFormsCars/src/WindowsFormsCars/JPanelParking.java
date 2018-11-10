@@ -2,14 +2,20 @@ package WindowsFormsCars;
 
 import java.awt.Graphics;
 
+import javax.swing.JList;
 import javax.swing.JPanel;
 
-
 public class JPanelParking extends JPanel {
-	private Parking<ITransport> parking;
+	private MultiLevelParking parking;
+	// private final int countLevel = 5;
+	private JList listLevels;
 
-	public void setParking(Parking parking) {
+	public void setParking(MultiLevelParking parking) {
 		this.parking = parking;
+	}
+
+	public void setList(JList listLevels) {
+		this.listLevels = listLevels;
 	}
 
 	@Override
@@ -17,9 +23,12 @@ public class JPanelParking extends JPanel {
 		super.paint(g);
 		try {
 			if (parking != null) {
-				parking.Draw(g);
+				if (listLevels.getSelectedIndex() != -1) {
+					parking.getParking(listLevels.getSelectedIndex()).Draw(g);
+				}
 			}
 		} catch (Exception ex) {
+
 		}
 	}
 }
