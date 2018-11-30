@@ -6,9 +6,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Parking<T extends ITransport> {
-	private HashMap<Integer, T> _places;//Массив объектов, которые храним
+	private HashMap<Integer, T> _places;// Массив объектов, которые храним
 	private int _maxCount;
-	private int PictureWidth;//Ширина окна отрисовки
+	private int PictureWidth;// Ширина окна отрисовки
 
 	public int getPictureWidth() {
 		return PictureWidth;
@@ -92,4 +92,11 @@ public class Parking<T extends ITransport> {
 		}
 	}
 
+	public T getTruck(int index) {
+		if (_places.get(index) != null) {
+			return _places.get(index);
+		} else {
+			return null;
+		}
+	}
 }
