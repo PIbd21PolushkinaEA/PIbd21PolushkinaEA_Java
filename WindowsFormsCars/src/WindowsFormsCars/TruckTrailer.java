@@ -3,7 +3,6 @@ package WindowsFormsCars;
 import java.awt.Color;
 import java.awt.Graphics;
 
-
 public class TruckTrailer extends Truck {
 
 	public Color DopColor;// Дополнительный цвет
@@ -53,4 +52,12 @@ public class TruckTrailer extends Truck {
 		g.setColor(Color.blue);// окно
 		g.fillRect((int) _startPosX + 5, (int) _startPosY + 15, 20, 15);
 	}
+
+	// / Смена дополнительного цвета
+	// / </summary>
+	// / <param name="color"></param>
+	public void SetDopColor(Color color) {
+		DopColor = color;
+	}
+
 }
