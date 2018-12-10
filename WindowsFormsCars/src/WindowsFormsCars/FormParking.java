@@ -87,7 +87,7 @@ public class FormParking extends JFrame {
 				"\u0417\u0430\u043A\u0430\u0437\u0430\u0442\u044C \u0433\u0440\u0443\u0437\u043E\u0432\u0438\u043A");
 		buttonSetTruck.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				select = new FormTruckConfig(frame);
 				if (select.res()) {
 					ITransport truck = select.getTruck();
@@ -153,6 +153,72 @@ public class FormParking extends JFrame {
 		JLabel levelsLabel = new JLabel("\u0423\u0440\u043E\u0432\u043D\u0438:");
 		levelsLabel.setBounds(756, 11, 56, 16);
 		contentPane.add(levelsLabel);
+
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.setBounds(12, 11, 50, 26);
+		contentPane.add(menuBar);
+		JMenu menufile = new JMenu("Файл");
+		menufile.setHorizontalAlignment(SwingConstants.CENTER);
+		menuBar.add(menufile);
+		JMenuItem save = new JMenuItem("Сохнанить");
+		JMenuItem download = new JMenuItem("Загрузить");
+		menufile.add(save);
+		menufile.addSeparator();
+		menufile.add(download);
+
+		save.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				JFileChooser filesave = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(
+						"txt file", "txt");
+				filesave.setFileFilter(filter);
+				if (filesave.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+					File file = filesave.getSelectedFile();
+					String path = file.getAbsolutePath();
+					if (parking.SaveData(path)) {
+						JOptionPane.showMessageDialog(null,
+								"Сохранение прошло успешно");
+						return;
+					} else {
+						JOptionPane.showMessageDialog(null, "Не сохранилось",
+								"", 0, null);
+					}
+				}
+
+			}
+
+		});
+		download.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+
+				JFileChooser fileChooser = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(
+						"txt file", "txt");
+				fileChooser.setFileFilter(filter);
+				if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+					File file = fileChooser.getSelectedFile();
+					try {
+						if (parking.LoadData(file.getAbsolutePath())) {
+							JOptionPane.showMessageDialog(null, "Loaded");
+						} else {
+							JOptionPane.showMessageDialog(null, "Load failed",
+									"", 0, null);
+						}
+					} catch (Exception ex) {
+						JOptionPane.showMessageDialog(null, ex.getMessage(),
+								"", 0, null);
+					}
+					contentPane.repaint();
+				}
+			}
+
+		});
+
 	}
 
 	/**

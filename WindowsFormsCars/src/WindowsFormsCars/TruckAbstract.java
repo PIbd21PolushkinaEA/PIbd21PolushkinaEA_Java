@@ -52,5 +52,5 @@ public abstract class TruckAbstract implements ITransport {
 	public abstract void DrawTruckTrailer(Graphics g);
 
 	public abstract void MoveTransport(Direction direction);
-
+	public abstract String getInfo();
 }
