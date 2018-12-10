@@ -15,6 +15,18 @@ public class Truck extends TruckAbstract {
 		MainColor = mainColor;
 	}
 
+	public Truck(String info)// / Конструктор
+	{
+		String[] strs = info.split(";");
+
+		if (strs.length == 5) {
+			MaxSpeed = Integer.parseInt(strs[0]);
+			Weight = Float.parseFloat(strs[1]);
+			MainColor = new Color(Integer.parseInt(strs[2]),
+					Integer.parseInt(strs[3]), Integer.parseInt(strs[4]));
+		}
+	}
+
 	@Override
 	public void MoveTransport(Direction direction) {
 		float step = getMaxSpeed() * 100 / getWeight();
@@ -61,4 +73,11 @@ public class Truck extends TruckAbstract {
 		g.setColor(Color.blue);// окно
 		g.fillRect((int) _startPosX + 5, (int) _startPosY + 15, 20, 15);
 	}
+
+	@Override
+	public String getInfo() {
+		return MaxSpeed + ";" + Weight + ";" + MainColor.getRed() + ";"
+				+ MainColor.getGreen() + ";" + MainColor.getBlue();
+	}
+
 }

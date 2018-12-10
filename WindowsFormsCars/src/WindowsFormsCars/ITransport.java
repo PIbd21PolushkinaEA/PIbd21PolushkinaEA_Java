@@ -14,4 +14,6 @@ public interface ITransport {
 	void DrawTruckTrailer(Graphics g);// Отрисовка автомобиля
 
 	void SetMainColor(Color color);// Смена основного цвета автомобиля
+
+	String getInfo();
 }
