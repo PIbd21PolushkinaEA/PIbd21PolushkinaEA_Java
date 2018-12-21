@@ -12,6 +12,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class FormParking extends JFrame {
 
@@ -21,11 +28,10 @@ public class FormParking extends JFrame {
 	private ITransport truck;
 	private MultiLevelParking parking; // Объект от класса многоуровневой
 										// парковки
-
 	private final int countLevel = 5; // Количество уровней-парковок
-
 	private static JPanelParking panelParking;
 	FormTruckConfig select;
+	private Logger logger;
 
 	/**
 	 * Launch the application.
@@ -46,7 +52,21 @@ public class FormParking extends JFrame {
 	/**
 	 * Create the application.
 	 */
-	public FormParking() {
+	public FormParking() throws SecurityException, IOException {
+		logger = Logger.getLogger(FormParking.class.getName());
+		try {
+			FileHandler fh = null;
+			fh = new FileHandler("C:\\Users\\Евгения\\Desktop\\log.txt");
+			logger.addHandler(fh);
+			logger.setUseParentHandlers(false);
+			SimpleFormatter formatter = new SimpleFormatter();
+			fh.setFormatter(formatter);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 940, 540);
 		contentPane = new JPanel();
@@ -87,20 +107,30 @@ public class FormParking extends JFrame {
 				"\u0417\u0430\u043A\u0430\u0437\u0430\u0442\u044C \u0433\u0440\u0443\u0437\u043E\u0432\u0438\u043A");
 		buttonSetTruck.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-
 				select = new FormTruckConfig(frame);
-				if (select.res()) {
-					ITransport truck = select.getTruck();
-					if (truck != null) {
+				try {
+					if (select.res()) {
+						ITransport truck = select.getTruck();
 						int place = parking.getParking(
 								listLevels.getSelectedIndex()).addTransport(
 								truck);
+						logger.log(Level.INFO, "Добавлен грузовик на место "
+								+ place);
+						contentPane.repaint();
 
-						if (place != -1) {
-							panelParking.repaint();
-						}
 					}
-					contentPane.repaint();
+				} catch (ParkingOverflowException e) {
+					JOptionPane.showMessageDialog(null, e.getMessage(),
+							"Переполнение", 0, null);
+					return;
+				} catch (ParkingOccupiedPlaceException e) {
+					JOptionPane.showMessageDialog(null, e.getMessage(),
+							"Место уже занято", 0, null);
+					return;
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(frame, ex.getMessage(),
+							"Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
+					return;
 				}
 			}
 		});
@@ -127,15 +157,18 @@ public class FormParking extends JFrame {
 				int numberOfPlace = 0;
 				try {
 					numberOfPlace = Integer.parseInt(textField.getText());
-				} catch (Exception ex) {
-					textField.setText("Invalid input");
-					return;
-				}
-				truck = parking.getParking(listLevels.getSelectedIndex())
-						.removeTransport(numberOfPlace);
-				if (truck != null) {
+					truck = parking.getParking(listLevels.getSelectedIndex())
+							.removeTransport(numberOfPlace);
 					truck.SetPosition(5, 5, panelTakeTrain.getWidth(),
 							panelTakeTrain.getHeight());
+					logger.info("Изъят грузовик с места " + numberOfPlace);
+				} catch (ParkingNotFoundException e) {
+					JOptionPane.showMessageDialog(null, e.getMessage(),
+							"Не найдено", 0, null);
+					return;
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(frame, ex.getMessage(),
+							"Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
 				}
 				panelTakeTrain.setTransport(truck);
 				panelTakeTrain.repaint();
@@ -178,18 +211,18 @@ public class FormParking extends JFrame {
 				if (filesave.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 					File file = filesave.getSelectedFile();
 					String path = file.getAbsolutePath();
-					if (parking.SaveData(path)) {
-						JOptionPane.showMessageDialog(null,
-								"Сохранение прошло успешно");
-						return;
-					} else {
+					try {
+						if (parking.SaveData(file.getAbsolutePath())) {
+							logger.info("Сохранено в файл " + file.getName());
+							JOptionPane.showMessageDialog(null,
+									"Сохранение прошло успешно");
+						}
+					} catch (Exception ex) {
 						JOptionPane.showMessageDialog(null, "Не сохранилось",
 								"", 0, null);
 					}
 				}
-
 			}
-
 		});
 		download.addActionListener(new ActionListener() {
 
@@ -204,23 +237,19 @@ public class FormParking extends JFrame {
 					File file = fileChooser.getSelectedFile();
 					try {
 						if (parking.LoadData(file.getAbsolutePath())) {
-							JOptionPane.showMessageDialog(null, "Loaded");
-						} else {
-							JOptionPane.showMessageDialog(null, "Load failed",
-									"", 0, null);
+							logger.info("Загружено из файла " + file.getName());
+							JOptionPane.showMessageDialog(null,
+									"Загрузка прошла успешно");
 						}
 					} catch (Exception ex) {
-						JOptionPane.showMessageDialog(null, ex.getMessage(),
+						JOptionPane.showMessageDialog(null, "Не загрузилось",
 								"", 0, null);
 					}
 					contentPane.repaint();
 				}
 			}
-
 		});
-
 	}
-
 	/**
 	 * Initialize the contents of the frame.
 	 */
