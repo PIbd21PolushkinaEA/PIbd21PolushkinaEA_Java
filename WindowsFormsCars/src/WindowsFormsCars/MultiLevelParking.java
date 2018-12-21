@@ -91,7 +91,8 @@ public class MultiLevelParking {
 		}
 	}
 
-	public boolean LoadData(String filename) {
+	public boolean LoadData(String filename) throws ParkingOverflowException,
+			ParkingOccupiedPlaceException {
 		File file = new File(filename);
 		if (!file.exists()) {
 			return false;

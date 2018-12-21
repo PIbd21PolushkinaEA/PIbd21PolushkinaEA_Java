@@ -38,9 +38,10 @@ public class Parking<T extends ITransport> {
 		this.PictureHeight = PictureHeight;
 	}
 
-	public int addTransport(T transport) {
+	public int addTransport(T transport) throws ParkingOverflowException,
+			ParkingOccupiedPlaceException {
 		if (_places.size() == _maxCount) {
-			return -1;
+			throw new ParkingOverflowException();
 		}
 		for (int i = 0; i < _maxCount; i++) {
 			if (checkFreePlace(i)) {
@@ -51,16 +52,16 @@ public class Parking<T extends ITransport> {
 				return i;
 			}
 		}
-		return -1;
+		throw new ParkingOccupiedPlaceException();
 	}
 
-	public T removeTransport(int index) {
+	public T removeTransport(int index) throws ParkingNotFoundException {
 		if (!checkFreePlace(index)) {
 			T transport = _places.get(index);
 			_places.remove(index);
 			return transport;
 		}
-		return null;
+		throw new ParkingNotFoundException();
 	}
 
 	private boolean checkFreePlace(int index) {// / Метод проверки заполнености
