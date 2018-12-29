@@ -102,15 +102,9 @@ public class FormTruckConfig extends JDialog {
 					for (DataFlavor df : e.getTransferable()
 							.getTransferDataFlavors()) {
 						if (e.getTransferable().getTransferData(df) == "Обычный грузовик") {
-							truck = new Truck(
-									100 + (int) (Math.random() * 300),
-									1000 + (int) (Math.random() * 2000),
-									Color.WHITE);
+							truck = new Truck(100,1000,Color.WHITE);
 						} else if (e.getTransferable().getTransferData(df) == "Грузовик-полуприцеп") {
-							truck = new TruckTrailer(
-									100 + (int) (Math.random() * 300),
-									1000 + (int) (Math.random() * 2000),
-									Color.WHITE, Color.BLACK, true);
+							truck = new TruckTrailer(100,1000,Color.WHITE, Color.BLACK, true);
 						}
 						draw(panel, truck);
 					}
@@ -370,7 +364,6 @@ public class FormTruckConfig extends JDialog {
 		case "gold":
 			return Color.orange;
 		}
-
 		return null;
 	}
 }

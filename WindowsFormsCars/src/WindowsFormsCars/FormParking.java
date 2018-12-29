@@ -56,7 +56,7 @@ public class FormParking extends JFrame {
 		logger = Logger.getLogger(FormParking.class.getName());
 		try {
 			FileHandler fh = null;
-			fh = new FileHandler("C:\\Users\\Евгения\\Desktop\\log.txt");
+			fh = new FileHandler("C:\\Users\\Евгения\\Desktop\\logger.txt");
 			logger.addHandler(fh);
 			logger.setUseParentHandlers(false);
 			SimpleFormatter formatter = new SimpleFormatter();
@@ -66,7 +66,6 @@ public class FormParking extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 940, 540);
 		contentPane = new JPanel();
@@ -84,7 +83,7 @@ public class FormParking extends JFrame {
 		}
 
 		JList listLevels = new JList(listModel);
-		listLevels.setBounds(701, 40, 170, 124);
+		listLevels.setBounds(701, 40, 170, 100);
 		contentPane.add(listLevels);
 		listLevels
 				.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -114,30 +113,31 @@ public class FormParking extends JFrame {
 						int place = parking.getParking(
 								listLevels.getSelectedIndex()).addTransport(
 								truck);
-						logger.log(Level.INFO, "Добавлен грузовик на место "
-								+ place);
+						logger.info("Добавлен грузовик на место " + place);
 						contentPane.repaint();
-
 					}
-				} catch (ParkingOverflowException e) {
-					JOptionPane.showMessageDialog(null, e.getMessage(),
+				} catch (ParkingOverflowException ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage(),
 							"Переполнение", 0, null);
 					return;
-				} catch (ParkingOccupiedPlaceException e) {
-					JOptionPane.showMessageDialog(null, e.getMessage(),
+				} catch (ParkingOccupiedPlaceException ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage(),
 							"Место уже занято", 0, null);
 					return;
+				} catch (ParkingAlreadyHaveException ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage(),
+							"Дублирование", 0, null);
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(frame, ex.getMessage(),
-							"Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, ex.getMessage(),
+							"Неизвестная ошибка", 0, null);
 					return;
 				}
 			}
 		});
-		buttonSetTruck.setBounds(665, 185, 245, 45);
+		buttonSetTruck.setBounds(665, 148, 245, 45);
 		contentPane.add(buttonSetTruck);
 		JPanel panelGroupElements = new JPanel();
-		panelGroupElements.setBounds(665, 243, 245, 199);
+		panelGroupElements.setBounds(665, 283, 245, 199);
 		contentPane.add(panelGroupElements);
 		panelGroupElements.setLayout(null);
 		JLabel lblNewLabel = new JLabel("\u041C\u0435\u0441\u0442\u043E");
@@ -199,6 +199,19 @@ public class FormParking extends JFrame {
 		menufile.addSeparator();
 		menufile.add(download);
 
+		JButton buttonSort = new JButton(
+				"\u0421\u043E\u0440\u0442\u0438\u0440\u043E\u0432\u043A\u0430");
+		buttonSort.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				parking.sort();
+				contentPane.repaint();
+				logger.info("Сортировка");
+			}
+		});
+		buttonSort.setBounds(665, 206, 245, 45);
+		contentPane.add(buttonSort);
+
 		save.addActionListener(new ActionListener() {
 
 			@Override
@@ -250,6 +263,7 @@ public class FormParking extends JFrame {
 			}
 		});
 	}
+
 	/**
 	 * Initialize the contents of the frame.
 	 */

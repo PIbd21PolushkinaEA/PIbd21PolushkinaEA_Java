@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.omg.CORBA.Environment;
 
@@ -92,7 +93,7 @@ public class MultiLevelParking {
 	}
 
 	public boolean LoadData(String filename) throws ParkingOverflowException,
-			ParkingOccupiedPlaceException {
+			ParkingOccupiedPlaceException, ParkingAlreadyHaveException {
 		File file = new File(filename);
 		if (!file.exists()) {
 			return false;
@@ -151,6 +152,10 @@ public class MultiLevelParking {
 		} catch (IOException ex) {
 			return false;
 		}
+	}
+
+	public void sort() {
+		parkingStages.sort(null);
 	}
 
 }

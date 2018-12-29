@@ -25,7 +25,7 @@ public class TruckTrailer extends Truck {
 		Cabin = value;
 	}
 
-	public TruckTrailer(int maxSpeed, float weight, Color mainColor,// Конструктор
+	public TruckTrailer(int maxSpeed, int weight, Color mainColor,// Конструктор
 			Color dopColor, boolean cabin) {
 		super(maxSpeed, weight, mainColor);
 		DopColor = dopColor;
@@ -34,11 +34,10 @@ public class TruckTrailer extends Truck {
 
 	public TruckTrailer(String info) {// / Конструктор
 		super(info);
-
 		String[] strs = info.split(";");
 		if (strs.length == 9) {
 			MaxSpeed = Integer.parseInt(strs[0]);
-			Weight = Float.parseFloat(strs[1]);
+			Weight = Integer.parseInt(strs[1]);
 			MainColor = new Color(Integer.parseInt(strs[2]),
 					Integer.parseInt(strs[3]), Integer.parseInt(strs[4]));
 			DopColor = new Color(Integer.parseInt(strs[5]),
@@ -80,5 +79,64 @@ public class TruckTrailer extends Truck {
 				+ MainColor.getGreen() + ";" + MainColor.getBlue() + ";"
 				+ DopColor.getRed() + ";" + DopColor.getGreen() + ";"
 				+ DopColor.getBlue() + ";" + Cabin;
+	}
+
+	public int compareTo(TruckTrailer another) {
+		if (another == null) {
+			return 1;
+		}
+		if (MaxSpeed != another.MaxSpeed) {
+			return Integer.valueOf(MaxSpeed).compareTo(another.MaxSpeed);
+		}
+		if (Weight != another.Weight) {
+			return Integer.valueOf(Weight).compareTo(another.Weight);
+		}
+		if (MainColor != another.MainColor) {
+			return Integer.valueOf(MainColor.getRGB()).compareTo(
+					another.MainColor.getRGB());
+		}
+		if (DopColor != another.DopColor) {
+			return Integer.valueOf(DopColor.getRGB()).compareTo(
+					another.DopColor.getRGB());
+		}
+		if (Cabin != another.Cabin) {
+			return Boolean.valueOf(Cabin).compareTo(another.Cabin);
+		}
+		return 0;
+	}
+
+	@Override
+	public boolean equals(Object another) {
+		if (another == null) {
+			return false;
+		}
+		if (!(another instanceof TruckTrailer)) {
+			return false;
+		}
+		TruckTrailer tank = (TruckTrailer) another;
+		return equals(tank);
+	}
+
+	public boolean equals(TruckTrailer another) {
+		if (another == null) {
+			return false;
+		}
+		if (MaxSpeed != another.MaxSpeed) {
+			return false;
+		}
+		if (Weight != another.Weight) {
+			return false;
+		}
+		if (MainColor != another.MainColor) {
+			return false;
+		}
+		if (DopColor != another.DopColor) {
+			return false;
+		}
+		if (Cabin != another.Cabin) {
+			return false;
+		}
+
+		return true;
 	}
 }
