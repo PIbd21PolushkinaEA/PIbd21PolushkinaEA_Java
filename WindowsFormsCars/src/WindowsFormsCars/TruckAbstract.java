@@ -18,13 +18,13 @@ public abstract class TruckAbstract implements ITransport {
 		MaxSpeed = value;
 	}
 
-	public float Weight;// Вес автомобиля
+	public int Weight;// Вес автомобиля
 
-	public float getWeight() {
+	public int getWeight() {
 		return Weight;
 	}
 
-	public void setWeight(float value) {
+	public void setWeight(int value) {
 		Weight = value;
 	}
 

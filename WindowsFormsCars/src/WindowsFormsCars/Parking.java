@@ -2,10 +2,12 @@ package WindowsFormsCars;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class Parking<T extends ITransport> {
+public class Parking<T extends ITransport> implements Iterable<T>, Iterator<T>,
+		Comparable<Parking<T>> {
 	private HashMap<Integer, T> _places;// Массив объектов, которые храним
 	private int _maxCount;
 	private int PictureWidth;// Ширина окна отрисовки
@@ -30,6 +32,7 @@ public class Parking<T extends ITransport> {
 
 	private int _placeSizeWidth = 210;// / Размер парковочного места (ширина)
 	private int _placeSizeHeight = 80;// / Размер парковочного места (высота)
+	private int currentIndex;
 
 	public Parking(int size, int pictureWidth, int pictureHeight) { // Конструктор
 		_maxCount = size;
@@ -39,20 +42,29 @@ public class Parking<T extends ITransport> {
 	}
 
 	public int addTransport(T transport) throws ParkingOverflowException,
-			ParkingOccupiedPlaceException {
-		if (_places.size() == _maxCount) {
+			ParkingOccupiedPlaceException, ParkingAlreadyHaveException {
+
+		if (this._places.size() == this._maxCount) {
 			throw new ParkingOverflowException();
 		}
-		for (int i = 0; i < _maxCount; i++) {
-			if (checkFreePlace(i)) {
-				_places.put(i, transport);
-				_places.get(i).SetPosition(5 + i / 5 * _placeSizeWidth + 5,
-						i % 5 * _placeSizeHeight + 15, PictureWidth,
-						PictureHeight);
-				return i;
-			}
+		int index = _places.size();
+		for (int i = 0; i <= _places.size(); i++) {
+			if (checkFreePlace(i))
+				index = i;
+			if (_places.containsValue(transport))
+				throw new ParkingAlreadyHaveException();
 		}
-		throw new ParkingOccupiedPlaceException();
+		if (index != _places.size()) {
+			_places.put(index, transport);
+			_places.get(index).SetPosition(5 + index / 5 * _placeSizeWidth + 5,
+					index % 5 * _placeSizeHeight + 15, PictureWidth,
+					PictureHeight);
+			return index;
+		}
+		_places.put(this._places.size(), transport);
+		_places.get(index).SetPosition(5 + index / 5 * _placeSizeWidth + 5,
+				index % 5 * _placeSizeHeight + 15, PictureWidth, PictureHeight);
+		return this._places.size() - 1;
 	}
 
 	public T removeTransport(int index) throws ParkingNotFoundException {
@@ -99,5 +111,74 @@ public class Parking<T extends ITransport> {
 		} else {
 			return null;
 		}
+
+	}
+
+	@Override
+	public int compareTo(Parking<T> other) {
+		if (this._places.size() > other._places.size()) {
+			return -1;
+		} else if (this._places.size() < other._places.size()) {
+			return 1;
+		} else {
+			Integer[] thisKeys = this._places.keySet().toArray(
+					new Integer[this._places.size()]);
+			Integer[] otherKeys = other._places.keySet().toArray(
+					new Integer[other._places.size()]);
+			for (int i = 0; i < this._places.size(); i++) {
+				if (this._places.get(thisKeys[i]).getClass()
+						.equals(Truck.class)
+						&& other._places.get(otherKeys[i]).getClass()
+								.equals(TruckTrailer.class)) {
+					return 1;
+				}
+				if (this._places.get(thisKeys[i]).getClass()
+						.equals(TruckTrailer.class)
+						&& other._places.get(otherKeys[i]).getClass()
+								.equals(Truck.class)) {
+					return -1;
+				}
+				if (this._places.get(thisKeys[i]).getClass()
+						.equals(Truck.class)
+						&& other._places.get(otherKeys[i]).getClass()
+								.equals(Truck.class)) {
+					return ((Truck) this._places.get(thisKeys[i]))
+							.compareTo((Truck) other._places.get(otherKeys[i]));
+				}
+				if (this._places.get(thisKeys[i]).getClass()
+						.equals(TruckTrailer.class)
+						&& other._places.get(otherKeys[i]).getClass()
+								.equals(TruckTrailer.class)) {
+					return ((TruckTrailer) this._places.get(thisKeys[i]))
+							.compareTo((TruckTrailer) other._places
+									.get(otherKeys[i]));
+				}
+			}
+		}
+		return 0;
+	}
+	//Iterable
+	@Override
+	public Iterator<T> iterator() {
+		return this;
+	}
+
+	@Override
+	public boolean hasNext() {
+		if (currentIndex + 1 >= _places.size()) {
+			currentIndex = -1;
+			return false;
+		}
+		currentIndex++;
+		return true;
+	}
+
+	@Override
+	public T next() {
+		return (T) _places.get(currentIndex);
+	}
+
+	private void reset() {
+		currentIndex = -1;
 	}
 }
